@@ -4,6 +4,6 @@
 Deliverable 1: Scrape Full-Resolution Mars Hemisphere Images and Titles
 ![]()
 Deliverable 2: Update the Web App with Mars Hemisphere Images and Titles
-![/Images/D2_Mars_Hemisphere_Images_Title.PNG]()
+![/Images/D2_Mars_Hemisphere_Images_Title.PNG](https://github.com/Tara-Lightner/Mission_to_Mars/blob/main/Images/D2_Mars_Hemisphere_Images_Title.PNG)
 Deliverable 3: Add Bootstrap 3 Components
-![/Images/D3_Bootstrap.PNG]()
+![/Images/D3_Bootstrap.PNG](https://github.com/Tara-Lightner/Mission_to_Mars/blob/main/Images/D3_Bootstrap.PNG)

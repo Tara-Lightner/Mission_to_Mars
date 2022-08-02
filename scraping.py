@@ -7,6 +7,8 @@ import datetime as dt
 from webdriver_manager.chrome import ChromeDriverManager
 
 # Set up Splinter
+
+
 def scrape_all():
     # Initiate headless driver for deployment
     executable_path = {'executable_path': ChromeDriverManager().install()}
@@ -17,12 +19,12 @@ def scrape_all():
 
     # Run all scraping functions and store results in dictionary
     data = {
-            "news_title": news_title,
-            "news_paragraph": news_paragraph,
-            "featured_image": featured_image(browser),
-            "facts": mars_facts(),
-            "hemispheres": hemispheres(browser),
-            "last_modified": dt.datetime.now()
+        "news_title": news_title,
+        "news_paragraph": news_paragraph,
+        "featured_image": featured_image(browser),
+        "facts": mars_facts(),
+        "hemispheres": hemispheres(browser),
+        "last_modified": dt.datetime.now()
     }
 
     # Stop webdriver and return data
@@ -30,6 +32,8 @@ def scrape_all():
     return data
 
 # Create Mars Function
+
+
 def mars_news(browser):
     # Visit the Mars news site
     url = 'https://redplanetscience.com/'
@@ -47,7 +51,8 @@ def mars_news(browser):
         # Use the parent element to find the first a tag and save it as `news_title`
         news_title = slide_elem.find('div', class_='content_title').get_text()
         # Use the parent element to find the paragraph text
-        news_p = slide_elem.find('div', class_='article_teaser_body').get_text()
+        news_p = slide_elem.find(
+            'div', class_='article_teaser_body').get_text()
 
     except AttributeError:
         return None, None
@@ -55,6 +60,8 @@ def mars_news(browser):
     return news_title, news_p
 
 # ## JPL Space Images Featured Image
+
+
 def featured_image(browser):
     # Visit URL
     url = 'https://spaceimages-mars.com'
@@ -74,7 +81,7 @@ def featured_image(browser):
         img_url_rel = img_soup.find('img', class_='fancybox-image').get('src')
 
     except AttributeError:
-        return None    
+        return None
 
     # Use the base url to create an absolute url
     img_url = f'https://spaceimages-mars.com/{img_url_rel}'
@@ -82,60 +89,64 @@ def featured_image(browser):
     return img_url
 
 # ## Mars Facts
+
+
 def mars_facts():
     # Add try/except for error handling
     try:
         # use 'read_html" to scrape the facts table into a dataframe
         df = pd.read_html('https://galaxyfacts-mars.com')[0]
-    
+
     except BaseException:
         return None
 
     # Assign columns and set index of dataframe
-    df.columns=['Description', 'Mars', 'Earth']
+    df.columns = ['Description', 'Mars', 'Earth']
     df.set_index('Description', inplace=True)
 
     # Convert dataframe into HTML format, add bootstrap
-    #return df.to_html(classes="table table-striped")  ??? Was this something that My tutuor added?  What are bootstraps?
+    # return df.to_html(classes="table table-striped")  ??? Was this something that My tutuor added?  What are bootstraps?
     return df.to_html(classes="table table-striped")
 
+
 def hemispheres(browser):
-    url = "https://marshemispheres.com/"    
+    url = "https://marshemispheres.com/"
     browser.visit(url+"index.html")
 
-    hemiimageurls=[]
+    hemiimageurls = []
     #links = browser.find_by_css("a.product-item img")
 
     for i in range(4):
-        #hemispheres={}
+        # hemispheres={}
         browser.find_by_css("a.product-item img")[i].click()
-        hemispheres=scrape_hemisphere(browser.html)
+        hemispheres = scrape_hemisphere(browser.html)
         #sample = browser.links.find_by_text("Sample").first
-        hemispheres["img_url"]=url+hemispheres["img_url"]
+        hemispheres["img_url"] = url+hemispheres["img_url"]
 
-        #hemispheres["title"]=browser.find_by_css("h2.title").text
+        # hemispheres["title"]=browser.find_by_css("h2.title").text
 
         hemiimageurls.append(hemispheres)
 
         browser.back()
     return hemiimageurls
 
+
 def scrape_hemisphere(html_text):
-    hemisoup=soup(html_text, "html.parser")
+    hemisoup = soup(html_text, "html.parser")
 
-    try: 
-        sample=hemisoup.find("a", text="Sample").get("href")
-        title=hemisoup.find("h2", class_="title").get_text()
-    except: 
-        title=None,
-        sample=None,
-
+    try:
+        sample = hemisoup.find("a", text="Sample").get("href")
+        title = hemisoup.find("h2", class_="title").get_text()
+    except:
+        title = None,
+        sample = None,
 
     hemispheres = {
         "title": title,
         "img_url": sample}
-   
+
     return hemispheres
+
 
 if __name__ == "__main__":
     # If running as script, print scraped data
