@@ -21,6 +21,7 @@ def scrape_all():
             "news_paragraph": news_paragraph,
             "featured_image": featured_image(browser),
             "facts": mars_facts(),
+            "hemispheres": hemispheres(browser),
             "last_modified": dt.datetime.now()
     }
 
@@ -96,7 +97,45 @@ def mars_facts():
 
     # Convert dataframe into HTML format, add bootstrap
     #return df.to_html(classes="table table-striped")  ??? Was this something that My tutuor added?  What are bootstraps?
-    return df.to_html()
+    return df.to_html(classes="table table-striped")
+
+def hemispheres(browser):
+    url = "https://marshemispheres.com/"    
+    browser.visit(url+"index.html")
+
+    hemiimageurls=[]
+    #links = browser.find_by_css("a.product-item img")
+
+    for i in range(4):
+        #hemispheres={}
+        browser.find_by_css("a.product-item img")[i].click()
+        hemispheres=scrape_hemisphere(browser.html)
+        #sample = browser.links.find_by_text("Sample").first
+        hemispheres["img_url"]=url+hemispheres["img_url"]
+
+        #hemispheres["title"]=browser.find_by_css("h2.title").text
+
+        hemiimageurls.append(hemispheres)
+
+        browser.back()
+    return hemiimageurls
+
+def scrape_hemisphere(html_text):
+    hemisoup=soup(html_text, "html.parser")
+
+    try: 
+        sample=hemisoup.find("a", text="Sample").get("href")
+        title=hemisoup.find("h2", class_="title").get_text()
+    except: 
+        title=None,
+        sample=None,
+
+
+    hemispheres = {
+        "title": title,
+        "img_url": sample}
+   
+    return hemispheres
 
 if __name__ == "__main__":
     # If running as script, print scraped data
